@@ -1,20 +1,47 @@
-const express = require('express');
-const app = express();
-const port =3000
-const cors= require('cors')
-app.use(cors())
-app.use(express.json())
-//routes
+const http = require('http');
+const app = require('./app');
+// donne un port valide
+const normalizePort = val => {
+  const port = parseInt(val, 10);
 
-app.post("/api/auth/signup",(req, res) => {
-  console.log("signup request:",req.body)
-})
-const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://baptiste:test36400@cluster2.thsotrz.mongodb.net/?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+};
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+//recherche des réponse au différente erreur
+const errorHandler = error => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
 
-app.get("/",()=>(req,res)=>res.send("hello world"))
-app.listen(port, ()=>console.log("listenning on port"+port ))
+const server = http.createServer(app);
+//donne le port utiliser
+server.on('error', errorHandler);
+server.on('listening', () => {
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+  console.log('Listening on ' + bind);
+});
+
+server.listen(port);
