@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
   //10 saltround pour meilleur sécuriter rapiditer
  bcrypt.hash(req.body.password, 10)
       .then(hash => {
+//crée un user avec email et password crypté
         const user = new User({
           email: req.body.email,
           password: hash
@@ -19,35 +20,31 @@ const jwt = require('jsonwebtoken');
   }
 
 //fonction connexion
-  exports.login= (req, res, next)=> {
-    const jwt_password= process.env.jwt_password
-
-      User.findOne({ email: req.body.email })
-          .then(user => {
-              if (!user) {
-                  return res.status(401).json({ error: 'Utilisateur non trouvé !' });
-              }
-              bcrypt.compare(req.body.password, user.password)
-                  .then(valid => {
-                      if (!valid) {
-                          return res.status(401).json({ error: 'Mot de passe incorrect !' });
-                      }
-                      res.status(200).json({
-                          userId: user._id,
-                          //vérification pour voir si l'utilisateur est authentifier
-                          token: jwt.sign(
-                              { userId: user._id },
-                              `${jwt_password}`,
-                              { expiresIn: '24h' }
-                          )
-                      });
-                  })
-                  .catch(error => res.status(500).json({ error }));
-          })
-          .catch(error => res.status(500).json({ error }));
-   };
- 
-
+exports.login = (req, res, next) => {
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            //si email n'est pas bon message d'err
+            if (!user) {
+                return res.status(401).json({ message: 'email incorrecte'});
+            }
+            bcrypt.compare(req.body.password, user.password)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({ message: 'mot de passe incorrecte' });
+                    }
+                    //si password/email correct prend l'id et crée un token avec l'id crypté
+                    res.status(200).json({
+                        // renvoie l'user id de mongodb
+                        userId: user._id,
+                         token: jwt.sign(
+                            { userId: user._id },
+                            process.env.jwt_password,
+                            {expiresIn: '24h'}),
+                    });
+                })
+                .catch(error => res.status(500).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error }));
+ };
   
 
-  
