@@ -36,10 +36,11 @@ exports.login = (req, res, next) => {
                     res.status(200).json({
                         // renvoie l'user id de mongodb
                         userId: user._id,
+                        //crée un token avec id crypter 
                          token: jwt.sign(
                             { userId: user._id },
                             process.env.jwt_password,
-                            {expiresIn: '24h'}),
+                            {expiresIn: '12h'}),
                     });
                 })
                 .catch(error => res.status(500).json({ error }));

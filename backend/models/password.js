@@ -1,16 +1,12 @@
-const passwordValidator = require('password-validator');
-
-const passwordSchema = new passwordValidator();
-
+var passwordValidator = require('password-validator');
+var passwordSchema = new passwordValidator();
+// le modèle du mot de passe
 passwordSchema
-//max min caractère
-.is().min(10)                                    
-.is().max(64)
-//majuscule miniscule                                  
-.has().uppercase()                              
-.has().lowercase()
-//chiffre et pas d'espace                           
-.has().digits()                                
-.has().not().spaces()                    
-
-module.exports = passwordSchema;
+.is().min(8)                                   
+.is().max(32)                                  
+.has().uppercase(1)                           
+.has().lowercase(1)                              
+.has().symbols(1)
+.has().digits(1)                              
+.has().not().spaces()
+module.exports=passwordSchema                           

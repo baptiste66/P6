@@ -1,7 +1,6 @@
 const sauce=require("../models/sauce")
-const fs = require("fs");
-
-
+//permet de naviguer dans les fichier
+const fs = require('fs');
 //récupérations des sauces
 exports.getSauces=(req,res,next)=>{
     sauce.find()
@@ -18,7 +17,7 @@ exports.singleSauce=(req,res,next)=>{
     .catch(error => res.status(404).json({ error }));
     
 }
-
+//création de sauce
   exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
@@ -34,6 +33,8 @@ exports.singleSauce=(req,res,next)=>{
     .catch(error => { res.status(400).json( { error })})
  };
 
+
+//modification de sauce
  exports.modifySauce = (req, res, next) => {
     const Sauce = new sauce({
       _id: req.params.id,
@@ -57,6 +58,30 @@ exports.singleSauce=(req,res,next)=>{
       }
     );
   };
+
+  
+//supp sauce
+exports.deleteSauce = (req, res, next) => {
+  sauce.findOne({ _id: req.params.id})
+      .then(Sauce => {
+        const imgName = sauce.imageUrl;
+        const imDefaut = "http://localhost:3000/images/defaut/imagedefaut.png";
+          if (Sauce.userId != req.auth.userId) {
+              res.status(401).json({message: 'Not authorized'});
+          } else if (imgName != imDefaut) {
+              const filename = Sauce.imageUrl.split('/images/')[1];
+              fs.unlink(`images/${filename}`, () => {
+                  sauce.deleteOne({_id: req.params.id})
+                      .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
+                      .catch(error => res.status(401).json({ error }));
+              });
+          }
+      })
+      .catch( error => {
+          res.status(500).json({ error });
+      });
+};
+//like dislike sauce
 
 
 
