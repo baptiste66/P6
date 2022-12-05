@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 //crée un user avec email et password crypté
         const user = new User({
           email: req.body.email,
+          //password a des condition voir models
           password: hash
         });
      user.save()

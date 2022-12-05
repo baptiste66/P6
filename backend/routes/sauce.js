@@ -9,6 +9,6 @@ router.get("/sauces/:id",auth,controllers.singleSauce)
 router.post("/sauces",auth,multer, controllers.createSauce)
 router.put("/sauces/:id",auth,multer,controllers.modifySauce)
 router.delete("/sauces/:id",auth,controllers.deleteSauce)
-
+router.post("/sauces/:id/like",auth,controllers.likeSauce)
 
 module.exports=router

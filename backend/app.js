@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 //sécurise l'url
 const helmet = require("helmet")
-//
+//donne accés au chemin du système de fichiers
 const path = require('path');
 const sauceRouter= require("./routes/sauce")
 const userRouter = require("./routes/user");
@@ -19,9 +19,10 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
-//
+/// pour cette route utiliser le fichier statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(helmet());
+// ajout du middleware express.json afin d'extraire le corps JSON pour la requête POST
 app.use(express.json())
 //route
  app.use("/api/auth/", userRouter)

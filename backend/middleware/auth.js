@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 
 module.exports = (req, res, next) => {
+
    try {
     //const pour décrypter et comparer userId
        const token = req.headers.authorization.split(' ')[1];
@@ -11,7 +12,6 @@ module.exports = (req, res, next) => {
        req.auth = {
            userId: userId
        };
-       
 	next();
    } catch(error) {
        res.status(401).json({ error  });
