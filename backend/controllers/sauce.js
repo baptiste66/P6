@@ -1,7 +1,7 @@
 const Sauce=require("../models/sauce")
 //permet de naviguer dans les fichier
 const fs = require('fs');
-const { json } = require("stream/consumers");
+
 
 //récupérations des sauces
 exports.getSauces=(req,res,next)=>{
@@ -102,10 +102,38 @@ exports.likeSauce = (req, res, next) => {
   if (like === 1) {
     // modification de la sauce dans la base de donnée push de l'ID utilisateur dans le tableau et incrémentation du like dans le compteur de like
     Sauce.updateOne({_id: sauceId},{$push: { usersLiked: userId }, $inc: {likes: 1}})
-    // réponse 200 + message
     .then(() => res.status(200).json({ message: "Votre like a été pris en compte!" }))
-    // si erreur réponse 400
     .catch(error => res.status(400).json({ error: error }));
   }
-
-}
+    // si l'utilisateur dislike
+    else if (like === -1) {
+      // modification de la sauce dans la base de donnée push de l'ID utilisateur dans le tableau et incrémentation du dislike dans le compteur dislike
+      Sauce.updateOne({_id: sauceId}, {$push: { usersDisliked: userId }, $inc: {dislikes: 1}})
+      .then(() => res.status(200).json({message: "Votre dislike a été pris en compte!"}))
+      .catch(error => res.status(400).json({ error: error }))
+    }
+    //si enlève
+    else if (like === 0) {
+      Sauce.findOne({_id: sauceId})
+      .then(sauce => {
+        // si l'utilisateur enlève son like
+        // vérifie sur l'ID de l'utilisateur apparait bien dans le tableau usersLiked
+        if (sauce.usersLiked.includes(userId)) {
+            // modification de la sauce, incrémentation du like retiré dans le compteur like et retire l'ID de l'utilisateur dans le tableau usersLiked
+            Sauce.updateOne({_id: sauceId}, {$inc: {likes: -1}, $pull: {usersLiked: userId}})
+            .then(() => res.status(200).json({ message: "Votre like à bien été supprimé" }))
+            .catch(error => res.status(400).json({ error: error }));
+          }
+        // si l'utilisateur enlève son dislike
+        // vérifie sur l'ID de l'utilisateur apparait bien dans le tableau usersLiked
+        if (sauce.usersDisliked.includes(userId)) {
+            // modification de la sauce, incrémentation du dislike retiré dans le compteur dislike et retire l'ID de l'utilisateur dans le tableau usersDisliked
+            Sauce.updateOne({_id: sauceId}, {$inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
+            .then(() => res.status(200).json({ message: "Votre dislike à bien été supprimé" }))
+            .catch(error => res.status(400).json({ error: error }))
+        }
+      })
+    // réponse 500 si erreur
+    .catch(error => res.status(500).json({ error: error }))
+    }
+  };

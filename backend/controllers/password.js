@@ -1,5 +1,5 @@
 const passwordSchema = require('../models/password');
-
+//permet de donner des condition au mdp
 module.exports = (req, res, next) => {
     if (passwordSchema.validate(req.body.password)) {
         next();

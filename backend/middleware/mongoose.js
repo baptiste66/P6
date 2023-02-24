@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const user=process.env.user
-const password= process.env.password
+const user=process.env.mongoose_user
+const password= process.env.mongoose_password
 //connexion mongoose
 mongoose.connect(`mongodb+srv://${user}:${password}@cluster2.thsotrz.mongodb.net/?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
