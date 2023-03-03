@@ -5,6 +5,7 @@ const controllers=require("../controllers/user")
 const passwordCondition=require("../controllers/password")
 //limite le nombre de tentative
 const raterLimit = require("express-rate-limit");
+
 const limiter = raterLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 10, // 10 essais

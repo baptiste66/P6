@@ -7,5 +7,6 @@ const userSchema = mongoose.Schema({
 });
 //limite un compte par adresse email
 userSchema.plugin(uniqueValidator);
+
 const User=mongoose.model("User",userSchema)
 module.exports={User}
