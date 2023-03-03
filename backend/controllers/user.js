@@ -26,12 +26,12 @@ exports.login = (req, res, next) => {
         .then(user => {
             //si email n'est pas bon message d'err
             if (!user) {
-                return res.status(401).json({ message: 'email incorrecte'});
+                return res.status(401).json({ message: 'email/mots de passe incorrecte'});
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
-                        return res.status(401).json({ message: 'mot de passe incorrecte' });
+                        return res.status(401).json({ message: 'email/mots de passe incorrecte' });
                     }
                     //si password/email correct prend l'id et crée un token avec l'id crypté
                     res.status(200).json({

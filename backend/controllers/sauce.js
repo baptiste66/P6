@@ -1,7 +1,7 @@
 const Sauce=require("../models/sauce")
 //permet de naviguer dans les fichier
 const fs = require('fs');
-const { json } = require("stream/consumers");
+
 
 
 //récupérations des sauces
@@ -41,8 +41,7 @@ exports.createSauce = (req, res, next) => {
     .catch(error => { res.status(400).json( { error })})
  }; 
 
-
-//modification de sauce
+// modifier sauce
 exports.modifySauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id }).then((sauce) => {
     // si une nouvelle image a été fournie
@@ -69,13 +68,6 @@ exports.modifySauce = (req, res, next) => {
   });
 };
 
-
-
-
-
-
-
-  
 
 //supp sauce
 exports.deleteSauce = (req, res, next) => {
